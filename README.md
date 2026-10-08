@@ -49,7 +49,7 @@ ansible-playbook -i ansible/inventory.example.ini ansible/site.yml -e admin_user
 - **Disk encryption** (`encrypt_partitions`): off by default because LUKS needs a passphrase at each boot. Set `ENCRYPT=1` + passphrase in the kickstart `%pre`, or accept the risk per your SSP.
 - **GRUB password** (`grub2_password`): only enforced if you pass `--grub-password-file`.
 - **usbguard / usb-storage disabled**: the STIG blocks USB storage; on physical hosts the usbguard policy is generated from devices attached at hardening time.
-- **Vendor FIPS validation**: Rocky's crypto modules are not (yet) CMVP-validated; FIPS *mode* is on, but `installed_OS_is_FIPS_certified`-style attestations need your AO's acceptance.
+- **Vendor FIPS validation**: Rocky's crypto modules are not (yet) CMVP-validated; FIPS *mode* is on, but you will need your AO to accept that.
 - Everything excluded is listed in `config/excluded_rules.txt` with the reason.
 
 ## Layout
