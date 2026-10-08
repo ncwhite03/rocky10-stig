@@ -51,6 +51,7 @@ openssh-server
 crypto-policies-scripts
 policycoreutils-python-utils
 git
+open-vm-tools
 -telnet-server
 -tftp-server
 -vsftpd

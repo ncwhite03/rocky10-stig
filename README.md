@@ -33,6 +33,9 @@ sudo ./scripts/harden.sh --admin-user youradmin --reboot
 Re-runnable; resumes after each reboot (FIPS -> remediation -> verification). Use `--scan-only` to audit without changing anything.
 Existing hosts that lack the separate mount points keep `partition_for_*` findings; repartitioning a live system is intentionally not automated.
 
+### vCenter
+See [docs/VCENTER.md](docs/VCENTER.md).
+
 ### C) Ansible (fleet)
 ```bash
 ansible-playbook -i ansible/inventory.example.ini ansible/site.yml -e admin_user=stigadmin
