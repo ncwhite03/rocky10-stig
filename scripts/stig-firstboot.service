@@ -1,0 +1,15 @@
+[Unit]
+Description=Rocky 10 DISA STIG hardening (first boot, resumable)
+After=network-online.target
+Wants=network-online.target
+ConditionPathExists=!/var/lib/rocky10-stig/done
+
+[Service]
+Type=oneshot
+EnvironmentFile=/etc/rocky10-stig.conf
+ExecStart=/opt/rocky10-stig/scripts/harden.sh --admin-user ${ADMIN_USER} --unattended --reboot
+TimeoutStartSec=infinity
+RemainAfterExit=no
+
+[Install]
+WantedBy=multi-user.target

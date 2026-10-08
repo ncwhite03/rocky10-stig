@@ -1,0 +1,6 @@
+# Rules removed from the tailored STIG profile.  Format:  rule_id  # reason
+# Rules not present in the datastream are skipped automatically.
+# Everything here is also listed in the generated report as an explicit gap.
+
+installed_OS_is_vendor_supported    # Checks for Red Hat vendor support; Rocky is not a Red Hat product
+ensure_redhat_gpgkey_installed      # Checks the Red Hat release key; supplemental.sh checks the Rocky key instead

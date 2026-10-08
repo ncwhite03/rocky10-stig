@@ -1,0 +1,44 @@
+---
+# Harden existing Rocky 10 hosts over SSH. Handles both reboots (FIPS, then post-remediation).
+#   ansible-playbook -i inventory.ini site.yml -e admin_user=stigadmin
+- name: Apply DISA RHEL 10 STIG to Rocky Linux 10
+  hosts: all
+  become: true
+  gather_facts: true
+  vars:
+    admin_user: ""
+    install_dir: /opt/rocky10-stig
+  pre_tasks:
+    - name: Require admin_user
+      ansible.builtin.assert:
+        that: admin_user | length > 0
+        fail_msg: "Pass -e admin_user=<non-root wheel user with a password>"
+    - name: Require Rocky 10
+      ansible.builtin.assert:
+        that:
+          - ansible_distribution == 'Rocky'
+          - ansible_distribution_major_version == '10'
+  tasks:
+    - name: Copy automation to host
+      ansible.builtin.copy:
+        src: "{{ playbook_dir }}/../"
+        dest: "{{ install_dir }}/"
+        mode: preserve
+        owner: root
+        group: root
+
+    # FIPS reboot -> remediation reboot -> verification scan = 3 passes.
+    - name: Run resumable hardening passes
+      ansible.builtin.include_tasks: tasks/stage.yml
+      loop: [1, 2, 3]
+      loop_control:
+        loop_var: stage_n
+
+    - name: Fail if hardening did not finish
+      ansible.builtin.assert:
+        that: done | default(false)
+        fail_msg: "harden.sh still wants a reboot after 3 passes; inspect /var/log/rocky10-stig/harden.log"
+
+    - name: Show scan summary
+      ansible.builtin.debug:
+        msg: "{{ last_output | select('search', 'Scan:|Report:') | list }}"

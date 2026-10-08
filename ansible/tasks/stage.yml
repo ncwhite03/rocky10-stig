@@ -1,0 +1,18 @@
+---
+# One resumable harden.sh pass; reboot if it asks for one (rc 3). Skipped once finished.
+- name: "Hardening pass {{ stage_n }}"
+  ansible.builtin.command: "{{ install_dir }}/scripts/harden.sh --admin-user {{ admin_user }} --unattended"
+  register: stage
+  failed_when: stage.rc not in [0, 3]
+  changed_when: stage.rc == 3
+  when: not (done | default(false))
+
+- name: "Reboot after pass {{ stage_n }}"
+  ansible.builtin.reboot:
+    reboot_timeout: 1200
+  when: not (done | default(false)) and stage.rc == 3
+
+- name: Record completion
+  ansible.builtin.set_fact:
+    done: "{{ done | default(false) or stage.rc == 0 }}"
+    last_output: "{{ stage.stdout_lines | default(last_output | default([])) }}"
