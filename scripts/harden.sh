@@ -96,16 +96,6 @@ if ! state_has backup; then
   warn "A VM snapshot is still the best rollback. Take one now if you haven't."
 fi
 
-# --- FIPS ---------------------------------------------------------------------
-if [[ "$(cat /proc/sys/crypto/fips_enabled)" != 1 ]]; then
-  state_has fips_requested && die "FIPS was requested earlier but kernel still reports fips_enabled=0. Check: fips-mode-setup --check; dmesg | grep -i fips"
-  log "Enabling FIPS mode..."
-  fips-mode-setup --enable
-  state_set fips_requested
-  reboot_or_exit "FIPS mode"
-fi
-log "FIPS mode active."
-
 # --- GRUB password (optional) ------------------------------------------------------
 if [[ -n "$GRUB_PW_FILE" ]]; then
   pw="$(cat "$GRUB_PW_FILE")"
